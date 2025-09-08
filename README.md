@@ -1,29 +1,16 @@
-# Agenda & Reuniões — PWA (GitHub Pages ready)
+# Agenda & Reuniões — PWA (GitHub Pages FIX)
 
-**Como usar**
+Este pacote já está configurado para GitHub Pages sem precisar editar o `vite.config.ts` manualmente.
+O workflow seta `VITE_GH_PAGES_BASE=/<nome-do-repo>/` automaticamente.
 
+**Publicar**
 1. Crie um repositório no GitHub (ex.: `impettus-agenda`).
-2. Suba todos os arquivos deste ZIP para a branch `main`.
-3. Abra **Settings → Pages** e escolha **GitHub Actions** como fonte (o workflow deste repo já faz o deploy).
-4. **Atenção:** edite o **nome do repositório** em:
-   - `vite.config.ts`: `const repoBase = '/SEU-REPO/'` (ou defina variável `VITE_GH_PAGES_BASE` no workflow).
-   - `index.html`: caminhos `/YOUR-REPO-NAME/` → substitua por `/<nome-do-repo>/`.
-   - `src/main.jsx`: mude `base` para `/<nome-do-repo>/`.
+2. Suba estes arquivos para a branch `main`.
+3. Em **Settings → Pages**, selecione **GitHub Actions**.
+4. Após o push, aguarde o deploy: `https://SEU_USUARIO.github.io/<nome-do-repo>/`
 
-Após o primeiro push em `main`, o GitHub Pages publicará em:
-`https://SEU_USUARIO.github.io/SEU-REPO/`
-
-## Desenvolvimento
+**Dev**
 ```bash
 npm ci
 npm run dev
 ```
-
-## Build
-```bash
-npm run build
-```
-
-## Notas
-- O app é PWA simples (manifest + service worker básico). Para produção, considere `vite-plugin-pwa`.
-- Integração **Microsoft Teams** está stubbada; implemente no backend (Microsoft Graph API) e preencha o link.

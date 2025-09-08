@@ -2,8 +2,9 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'node:path'
 
-// IMPORTANT: Set base to your GitHub repo name, e.g. '/impettus-agenda/'
-const repoBase = process.env.VITE_GH_PAGES_BASE || '/YOUR-REPO-NAME/';
+// GitHub Actions sets VITE_GH_PAGES_BASE automatically to "/<repo>/"
+// For local dev, it falls back to "/"
+const repoBase = process.env.VITE_GH_PAGES_BASE || '/';
 
 export default defineConfig({
   plugins: [react()],

@@ -6,10 +6,9 @@ import './styles.css'
 const root = createRoot(document.getElementById('root'))
 root.render(<App />)
 
-// Register SW (GitHub Pages path aware)
-const base = import.meta.env.VITE_GH_PAGES_BASE || '/YOUR-REPO-NAME/';
+// Register SW using Vite's BASE_URL (works on GitHub Pages)
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register(base + 'public/sw.js').catch(console.warn);
+    navigator.serviceWorker.register(import.meta.env.BASE_URL + 'sw.js').catch(console.warn);
   });
 }

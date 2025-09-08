@@ -19,13 +19,8 @@ const loadMeetings = () => {
 };
 
 const LOCATIONS = [
-  'Sala de Reunião 1.0',
-  'Sala de Reunião 2.0',
-  'Sala de Reunião 3.0',
-  'Sala de Reunião 4.0',
-  'Presencial',
-  'Auditória',
-  'Online',
+  'Sala de Reunião 1.0','Sala de Reunião 2.0','Sala de Reunião 3.0','Sala de Reunião 4.0',
+  'Presencial','Auditória','Online',
 ];
 
 function useMonthGrid(activeDate) {
@@ -83,18 +78,13 @@ export default function App() {
   }, [meetingsByDay, selectedDate, query]);
 
   function addMeeting(m) {
-    // conflito (mesmo dia e sobreposição)
     const conflict = meetings.some((ev) => {
       const sameDay = new Date(ev.start).toDateString() === new Date(m.start).toDateString();
       return sameDay && ev.start < m.end && m.start < ev.end;
     });
-    if (conflict) {
-      alert('Horário indisponível: já existe uma reunião marcada neste período.');
-      return;
-    }
+    if (conflict) { alert('Horário indisponível: já existe uma reunião marcada neste período.'); return; }
     setMeetings((prev) => [...prev, { ...m, id: crypto.randomUUID() }]);
   }
-
   function deleteMeeting(id) { setMeetings((prev) => prev.filter((m) => m.id !== id)); }
 
   return (
@@ -108,70 +98,69 @@ export default function App() {
           <button className="btn" onClick={() => setOpen(true)}><Plus size={16}/> Agendar Reunião</button>
         </div>
       </header>
-
-      <main className="container grid grid-3" style={{paddingTop: '16px', paddingBottom:'24px'}}>
-        <div className="card">
-          <div className="card-h">
-            <div>{monthLabel(month)}</div>
-            <div className="row">
-              <button className="btn outline" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth()-1, 1))}>Anterior</button>
-              <button className="btn outline" onClick={() => setMonth(new Date())}>Hoje</button>
-              <button className="btn" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth()+1, 1))}>Próximo</button>
-            </div>
-          </div>
-          <div className="card-c">
-            <div className="muted" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:8px">
-              {['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'].map(d => <div key={d} style={{textAlign:'center'}}>{d}</div>)}
-            </div>
-            <div className="calendar">
-              {monthCells.map(({ date, outside }, idx) => {
-                const isSelected = selectedDate.toDateString() === date.toDateString();
-                const isToday = new Date().toDateString() === date.toDateString();
-                const list = meetingsByDay.get(date.toDateString()) || [];
-                return (
-                  <motion.button key={idx} whileHover={{scale:1.01}} whileTap={{scale:0.99}}
-                    className={`cell ${outside?'outside':''} ${isSelected?'selected':''}`}
-                    onClick={() => setSelectedDate(date)}
-                  >
-                    <div className="top">
-                      <span style={{fontWeight: isToday ? 700 : 500}}>{date.getDate()}</span>
-                      {list.length>0 && <span className="badge">{list.length}</span>}
-                    </div>
-                  </motion.button>
-                )
-              })}
-            </div>
-            <div className="mt2">
-              <button className="btn" onClick={() => setOpen(true)}><Plus size={16}/> Agendar Reunião</button>
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="card-h"><div>{formatDate(selectedDate)} — Reuniões</div></div>
-          <div className="card-c">
-            <input className="input" placeholder="Buscar" value={query} onChange={(e)=>setQuery(e.target.value)} />
-            {dayMeetings.length===0? <p className="muted" style={{marginTop:12}}>Sem reuniões.</p> : (
-              <div className="list" style={{marginTop: 12}}>
-                {dayMeetings.map(m => (
-                  <div key={m.id} className="event">
-                    <div style={{fontWeight:600}}>{m.title}</div>
-                    <div className="row2"><Clock size={16}/> {formatTime(new Date(m.start))}–{formatTime(new Date(m.end))}</div>
-                    <div className="row2"><MapPin size={16}/> {m.location}</div>
-                    {m.participants?.length>0 && <div className="row2"><Users size={16}/> {m.participants.join(', ')}</div>}
-                    {m.onlineLink && <div className="row2"><LinkIcon size={16}/><a className="link" href={m.onlineLink} target="_blank">Acessar reunião</a></div>}
-                    {m.description && <p style={{marginTop:6}}>{m.description}</p>}
-                    <div className="row" style={{marginTop:8, justifyContent:'flex-start'}}>
-                      <button className="btn outline" onClick={()=>deleteMeeting(m.id)}><Trash2 size={16}/> Excluir</button>
-                    </div>
-                  </div>
-                ))}
+      <main className="container" style={{paddingTop:'16px', paddingBottom:'24px'}}>
+        <div className="grid" style={{gridTemplateColumns:'2fr 1fr', gap:'16px'}}>
+          <div className="card">
+            <div className="card-h">
+              <div>{monthLabel(month)}</div>
+              <div className="row">
+                <button className="btn outline" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth()-1, 1))}>Anterior</button>
+                <button className="btn outline" onClick={() => setMonth(new Date())}>Hoje</button>
+                <button className="btn" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth()+1, 1))}>Próximo</button>
               </div>
-            )}
+            </div>
+            <div className="card-c">
+              <div className="muted" style={{display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:6, marginBottom:8}}>
+                {['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'].map(d => <div key={d} style={{textAlign:'center'}}>{d}</div>)}
+              </div>
+              <div className="calendar">
+                {monthCells.map(({ date, outside }, idx) => {
+                  const isSelected = selectedDate.toDateString() === date.toDateString();
+                  const isToday = new Date().toDateString() === date.toDateString();
+                  const list = meetingsByDay.get(date.toDateString()) || [];
+                  return (
+                    <motion.button key={idx} whileHover={{scale:1.01}} whileTap={{scale:0.99}}
+                      className={`cell ${outside?'outside':''} ${isSelected?'selected':''}`}
+                      onClick={() => setSelectedDate(date)}
+                    >
+                      <div className="top">
+                        <span style={{fontWeight: isToday ? 700 : 500}}>{date.getDate()}</span>
+                        {list.length>0 && <span className="badge">{list.length}</span>}
+                      </div>
+                    </motion.button>
+                  )
+                })}
+              </div>
+              <div className="mt2">
+                <button className="btn" onClick={() => setOpen(true)}><Plus size={16}/> Agendar Reunião</button>
+              </div>
+            </div>
+          </div>
+          <div className="card">
+            <div className="card-h"><div>{formatDate(selectedDate)} — Reuniões</div></div>
+            <div className="card-c">
+              <input className="input" placeholder="Buscar" value={query} onChange={(e)=>setQuery(e.target.value)} />
+              {dayMeetings.length===0? <p className="muted" style={{marginTop:12}}>Sem reuniões.</p> : (
+                <div className="list" style={{marginTop: 12}}>
+                  {dayMeetings.map(m => (
+                    <div key={m.id} className="event">
+                      <div style={{fontWeight:600}}>{m.title}</div>
+                      <div className="row2"><Clock size={16}/> {formatTime(new Date(m.start))}–{formatTime(new Date(m.end))}</div>
+                      <div className="row2"><MapPin size={16}/> {m.location}</div>
+                      {m.participants?.length>0 && <div className="row2"><Users size={16}/> {m.participants.join(', ')}</div>}
+                      {m.onlineLink && <div className="row2"><LinkIcon size={16}/><a className="link" href={m.onlineLink} target="_blank">Acessar reunião</a></div>}
+                      {m.description && <p style={{marginTop:6}}>{m.description}</p>}
+                      <div className="row" style={{marginTop:8, justifyContent:'flex-start'}}>
+                        <button className="btn outline" onClick={()=>deleteMeeting(m.id)}><Trash2 size={16}/> Excluir</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </main>
-
       <ScheduleDialog open={open} onClose={() => setOpen(false)} onSave={(m)=>{addMeeting(m); setOpen(false);}} />
     </div>
   )
@@ -194,6 +183,12 @@ function ScheduleDialog({ open, onClose, onSave }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (!open) return;
+    const dlg = document.getElementById('schedule-dialog');
+    if (dlg && typeof dlg.showModal === 'function') dlg.showModal();
+  }, [open]);
+
+  useEffect(() => {
     const s = new Date(`${date}T${startTime}:00`);
     const e = new Date(s.getTime() + duration*60000);
     setEndTime(`${String(e.getHours()).padStart(2,'0')}:${String(e.getMinutes()).padStart(2,'0')}`);
@@ -205,12 +200,6 @@ function ScheduleDialog({ open, onClose, onSave }) {
     const diff = Math.max(15, Math.round((e - s) / 60000));
     setDuration(diff);
   }, [endTime]);
-
-  useEffect(() => {
-    if (!open) return;
-    const dlg = document.getElementById('schedule-dialog');
-    if (dlg && typeof dlg.showModal === 'function') dlg.showModal();
-  }, [open]);
 
   function closeDialog() {
     const dlg = document.getElementById('schedule-dialog');
@@ -239,7 +228,6 @@ function ScheduleDialog({ open, onClose, onSave }) {
       onlineLink: location === 'Online' ? (onlineMode === 'manual' ? manualLink.trim() : '') : '',
       createdAt: new Date(),
     };
-    // NOTE: Se onlineMode === 'teams', aqui você chamaria seu backend (Microsoft Graph) e preencheria meeting.onlineLink
     onSave?.(meeting);
     closeDialog();
   }
