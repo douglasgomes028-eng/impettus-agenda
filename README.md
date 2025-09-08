@@ -1,16 +1,12 @@
-# Agenda & Reuniões — PWA (GitHub Pages FIX)
+# Agenda & Reuniões — PWA (GitHub Pages SAFE)
 
-Este pacote já está configurado para GitHub Pages sem precisar editar o `vite.config.ts` manualmente.
-O workflow seta `VITE_GH_PAGES_BASE=/<nome-do-repo>/` automaticamente.
+Este pacote já está pronto para o Pages sem edição manual. O workflow:
+- roda `npm install` (não exige package-lock);
+- define automaticamente `VITE_GH_PAGES_BASE=/<nome-do-repo>/`;
+- builda e publica o `dist/`.
 
 **Publicar**
-1. Crie um repositório no GitHub (ex.: `impettus-agenda`).
-2. Suba estes arquivos para a branch `main`.
+1. Crie um repositório (ex.: `impettus-agenda`).
+2. Faça upload destes arquivos na branch `main`.
 3. Em **Settings → Pages**, selecione **GitHub Actions**.
-4. Após o push, aguarde o deploy: `https://SEU_USUARIO.github.io/<nome-do-repo>/`
-
-**Dev**
-```bash
-npm ci
-npm run dev
-```
+4. Abra a aba **Actions** e confirme o job verde. A URL final aparece como `page_url`.

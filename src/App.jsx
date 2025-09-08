@@ -14,14 +14,9 @@ const monthLabel = (d) => new Intl.DateTimeFormat('pt-BR', { month: 'long', year
 
 const LS_KEY = 'impettus-meetings-v3';
 const saveMeetings = (arr) => localStorage.setItem(LS_KEY, JSON.stringify(arr));
-const loadMeetings = () => {
-  try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch { return []; }
-};
+const loadMeetings = () => { try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch { return []; } };
 
-const LOCATIONS = [
-  'Sala de Reunião 1.0','Sala de Reunião 2.0','Sala de Reunião 3.0','Sala de Reunião 4.0',
-  'Presencial','Auditória','Online',
-];
+const LOCATIONS = ['Sala de Reunião 1.0','Sala de Reunião 2.0','Sala de Reunião 3.0','Sala de Reunião 4.0','Presencial','Auditória','Online'];
 
 function useMonthGrid(activeDate) {
   return useMemo(() => {
@@ -88,70 +83,71 @@ export default function App() {
   function deleteMeeting(id) { setMeetings((prev) => prev.filter((m) => m.id !== id)); }
 
   return (
-    <div>
-      <header>
-        <div className="container row">
-          <div className="row">
-            <CalendarDays size={22} />
-            <h1>Agenda de Reuniões</h1>
+    <div style={{minHeight:'100vh', background:'linear-gradient(#fff,#f1f5f9)', color:'#0f172a'}}>
+      <header style={{position:'sticky',top:0, background:'rgba(255,255,255,.7)', borderBottom:'1px solid #e2e8f0', backdropFilter:'blur(6px)'}}>
+        <div style={{maxWidth:1080, margin:'0 auto', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:12}}>
+          <div style={{display:'flex', alignItems:'center', gap:8}}>
+            <CalendarDays size={22} /><h1 style={{fontSize:18, margin:0}}>Agenda de Reuniões</h1>
           </div>
-          <button className="btn" onClick={() => setOpen(true)}><Plus size={16}/> Agendar Reunião</button>
+          <button className="btn" onClick={() => setOpen(true)} style={{display:'inline-flex',alignItems:'center',gap:8,height:36,padding:'0 12px',border:'1px solid #e2e8f0',borderRadius:10,background:'#111827',color:'#fff',cursor:'pointer'}}><Plus size={16}/> Agendar Reunião</button>
         </div>
       </header>
-      <main className="container" style={{paddingTop:'16px', paddingBottom:'24px'}}>
-        <div className="grid" style={{gridTemplateColumns:'2fr 1fr', gap:'16px'}}>
-          <div className="card">
-            <div className="card-h">
+
+      <main style={{maxWidth:1080, margin:'0 auto', padding:'16px'}}>
+        <div style={{display:'grid', gridTemplateColumns:'2fr 1fr', gap:16}}>
+          <div style={{background:'#fff', border:'1px solid #e2e8f0', borderRadius:16}}>
+            <div style={{padding:'12px 16px', borderBottom:'1px solid #e2e8f0', display:'flex', alignItems:'center', justifyContent:'space-between'}}>
               <div>{monthLabel(month)}</div>
-              <div className="row">
-                <button className="btn outline" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth()-1, 1))}>Anterior</button>
-                <button className="btn outline" onClick={() => setMonth(new Date())}>Hoje</button>
-                <button className="btn" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth()+1, 1))}>Próximo</button>
+              <div style={{display:'flex', gap:8}}>
+                <button onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth()-1, 1))}>Anterior</button>
+                <button onClick={() => setMonth(new Date())}>Hoje</button>
+                <button onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth()+1, 1))}>Próximo</button>
               </div>
             </div>
-            <div className="card-c">
-              <div className="muted" style={{display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:6, marginBottom:8}}>
+            <div style={{padding:'12px 16px'}}>
+              <div style={{display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:6, marginBottom:8, color:'#64748b', fontSize:12}}>
                 {['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'].map(d => <div key={d} style={{textAlign:'center'}}>{d}</div>)}
               </div>
-              <div className="calendar">
+              <div style={{display:'grid', gridTemplateColumns:'repeat(7, 1fr)', gap:6}}>
                 {monthCells.map(({ date, outside }, idx) => {
                   const isSelected = selectedDate.toDateString() === date.toDateString();
                   const isToday = new Date().toDateString() === date.toDateString();
                   const list = meetingsByDay.get(date.toDateString()) || [];
                   return (
                     <motion.button key={idx} whileHover={{scale:1.01}} whileTap={{scale:0.99}}
-                      className={`cell ${outside?'outside':''} ${isSelected?'selected':''}`}
                       onClick={() => setSelectedDate(date)}
+                      style={{height:96,padding:8,border:'1px solid #e2e8f0',borderRadius:14,background:'#fff',display:'flex',flexDirection:'column',opacity:outside?0.4:1, outline:isSelected?'2px solid #0f172a':'none'}}
                     >
-                      <div className="top">
+                      <div style={{display:'flex', justifyContent:'space-between', fontSize:12}}>
                         <span style={{fontWeight: isToday ? 700 : 500}}>{date.getDate()}</span>
-                        {list.length>0 && <span className="badge">{list.length}</span>}
+                        {list.length>0 && <span style={{fontSize:10, background:'#0ea5e9',color:'#fff',padding:'1px 6px',borderRadius:999}}>{list.length}</span>}
                       </div>
                     </motion.button>
                   )
                 })}
               </div>
-              <div className="mt2">
-                <button className="btn" onClick={() => setOpen(true)}><Plus size={16}/> Agendar Reunião</button>
+              <div style={{marginTop:16}}>
+                <button onClick={() => setOpen(true)} style={{display:'inline-flex',alignItems:'center',gap:8,height:36,padding:'0 12px',border:'1px solid #e2e8f0',borderRadius:10,background:'#111827',color:'#fff',cursor:'pointer'}}><Plus size={16}/> Agendar Reunião</button>
               </div>
             </div>
           </div>
-          <div className="card">
-            <div className="card-h"><div>{formatDate(selectedDate)} — Reuniões</div></div>
-            <div className="card-c">
-              <input className="input" placeholder="Buscar" value={query} onChange={(e)=>setQuery(e.target.value)} />
-              {dayMeetings.length===0? <p className="muted" style={{marginTop:12}}>Sem reuniões.</p> : (
-                <div className="list" style={{marginTop: 12}}>
+
+          <div style={{background:'#fff', border:'1px solid #e2e8f0', borderRadius:16}}>
+            <div style={{padding:'12px 16px', borderBottom:'1px solid #e2e8f0'}}>{formatDate(selectedDate)} — Reuniões</div>
+            <div style={{padding:'12px 16px'}}>
+              <input placeholder="Buscar" value={query} onChange={(e)=>setQuery(e.target.value)} style={{width:'100%',height:36,padding:'0 10px',border:'1px solid #e2e8f0',borderRadius:10}}/>
+              {dayMeetings.length===0? <p style={{color:'#64748b',marginTop:12,fontSize:14}}>Sem reuniões.</p> : (
+                <div style={{display:'grid', gap:10, marginTop:12}}>
                   {dayMeetings.map(m => (
-                    <div key={m.id} className="event">
+                    <div key={m.id} style={{border:'1px solid #e2e8f0', borderRadius:12, padding:10}}>
                       <div style={{fontWeight:600}}>{m.title}</div>
-                      <div className="row2"><Clock size={16}/> {formatTime(new Date(m.start))}–{formatTime(new Date(m.end))}</div>
-                      <div className="row2"><MapPin size={16}/> {m.location}</div>
-                      {m.participants?.length>0 && <div className="row2"><Users size={16}/> {m.participants.join(', ')}</div>}
-                      {m.onlineLink && <div className="row2"><LinkIcon size={16}/><a className="link" href={m.onlineLink} target="_blank">Acessar reunião</a></div>}
+                      <div style={{display:'flex',alignItems:'center',gap:6,color:'#64748b',fontSize:14}}><Clock size={16}/> {formatTime(new Date(m.start))}–{formatTime(new Date(m.end))}</div>
+                      <div style={{display:'flex',alignItems:'center',gap:6,color:'#64748b',fontSize:14}}><MapPin size={16}/> {m.location}</div>
+                      {m.participants?.length>0 && <div style={{display:'flex',alignItems:'center',gap:6,color:'#64748b',fontSize:14}}><Users size={16}/> {m.participants.join(', ')}</div>}
+                      {m.onlineLink && <div style={{display:'flex',alignItems:'center',gap:6,color:'#2563eb',fontSize:14}}><LinkIcon size={16}/><a href={m.onlineLink} target="_blank" rel="noreferrer">Acessar reunião</a></div>}
                       {m.description && <p style={{marginTop:6}}>{m.description}</p>}
-                      <div className="row" style={{marginTop:8, justifyContent:'flex-start'}}>
-                        <button className="btn outline" onClick={()=>deleteMeeting(m.id)}><Trash2 size={16}/> Excluir</button>
+                      <div style={{marginTop:8}}>
+                        <button onClick={()=>deleteMeeting(m.id)} style={{display:'inline-flex',alignItems:'center',gap:6,height:32,padding:'0 10px',border:'1px solid #e2e8f0',borderRadius:10,background:'#fff',cursor:'pointer'}}><Trash2 size={16}/> Excluir</button>
                       </div>
                     </div>
                   ))}
@@ -161,6 +157,7 @@ export default function App() {
           </div>
         </div>
       </main>
+
       <ScheduleDialog open={open} onClose={() => setOpen(false)} onSave={(m)=>{addMeeting(m); setOpen(false);}} />
     </div>
   )
@@ -234,10 +231,10 @@ function ScheduleDialog({ open, onClose, onSave }) {
 
   return (
     <dialog id="schedule-dialog" onClose={onClose}>
-      <div className="card-h"><div>Agendar Reunião</div></div>
-      <div className="card-c">
-        {error && <div className="error">{error}</div>}
-        <div className="grid-2">
+      <div style={{padding:'12px 16px', borderBottom:'1px solid #e2e8f0'}}>Agendar Reunião</div>
+      <div style={{padding:'12px 16px'}}>
+        {error && <div style={{background:'#fef2f2', color:'#991b1b', border:'1px solid #fecaca', padding:8, borderRadius:12, fontSize:14}}>{error}</div>}
+        <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
           <div><label>Título</label><input className="input" value={title} onChange={(e)=>setTitle(e.target.value)} /></div>
           <div><label>Data</label><input className="input" type="date" value={date} onChange={(e)=>setDate(e.target.value)} /></div>
           <div><label>Início</label><input className="input" type="time" value={startTime} onChange={(e)=>setStartTime(e.target.value)} /></div>
@@ -254,21 +251,17 @@ function ScheduleDialog({ open, onClose, onSave }) {
             {location === 'Online' && (
               <div>
                 <label>Como deseja gerar o link da reunião?</label>
-                <div className="row mt">
+                <div style={{display:'flex', gap:8, marginTop:8}}>
                   <button className={`btn ${onlineMode==='teams'?'':'outline'}`} onClick={()=>setOnlineMode('teams')}>Criar via Microsoft Teams</button>
                   <button className={`btn ${onlineMode==='manual'?'':'outline'}`} onClick={()=>setOnlineMode('manual')}>Inserir link manualmente</button>
                 </div>
-                {onlineMode==='teams' && (
-                  <p className="muted mt">Demo: integre com Microsoft Graph no backend e preencha automaticamente o link.</p>
-                )}
-                {onlineMode==='manual' && (
-                  <div className="mt"><input className="input" placeholder="https://zoom.us/j/..., https://meet.google.com/..." value={manualLink} onChange={(e)=>setManualLink(e.target.value)} /></div>
-                )}
+                {onlineMode==='teams' && <p style={{color:'#64748b', fontSize:12, marginTop:6}}>Demo: integre com Microsoft Graph e preencha automaticamente o link.</p>}
+                {onlineMode==='manual' && <div className="mt"><input className="input" placeholder="https://zoom.us/j/..., https://meet.google.com/..." value={manualLink} onChange={(e)=>setManualLink(e.target.value)} /></div>}
               </div>
             )}
           </div>
         </div>
-        <div className="row" style={{marginTop:12, justifyContent:'flex-end'}}>
+        <div style={{display:'flex', gap:8, justifyContent:'flex-end', marginTop:12}}>
           <button className="btn outline" onClick={()=>{document.getElementById('schedule-dialog').close(); onClose?.();}}>Cancelar</button>
           <button className="btn" onClick={handleSave}><Plus size={16}/> Salvar</button>
         </div>
